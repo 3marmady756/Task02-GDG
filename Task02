@@ -1,0 +1,71 @@
+CREATE DATABASE OnlineShoppingSystem;
+USE OnlineShoppingSystem;
+
+CREATE TABLE Users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Products (
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    category VARCHAR(50) DEFAULT 'new',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    order_date DATE NOT NULL,
+    total_amount DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE Order_Items (
+    order_item_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL,
+    subtotal DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES Products(product_id) ON DELETE CASCADE
+);
+
+INSERT INTO Users (username, email, password_hash) VALUES
+('alice', 'alice@example.com', 'hashed_password_1'),
+('bob', 'bob@example.com', 'hashed_password_2');
+
+INSERT INTO Products (name, price, category) VALUES
+('Laptop', 1200.00, 'Electronics'),
+('Smartphone', 800.00, 'Electronics');
+
+INSERT INTO Orders (user_id, order_date, total_amount) VALUES
+(1, '2025-02-28', 1200.00),
+(2, '2025-02-28', 800.00);
+
+INSERT INTO Order_Items (order_id, product_id, quantity, subtotal) VALUES
+(1, 1, 1, 1200.00),
+(2, 2, 1, 800.00);
+
+ALTER TABLE Products ADD COLUMN rating DECIMAL(3,2) DEFAULT 0;
+
+ALTER TABLE Products MODIFY COLUMN category VARCHAR(50) DEFAULT 'new';
+
+ALTER TABLE Products DROP COLUMN rating;
+
+DROP TABLE IF EXISTS SocialMediaPlatform.Users;
+
+DROP DATABASE IF EXISTS SocialMediaPlatform;
+
+UPDATE Orders SET order_date = CURDATE() WHERE order_id > 0;
+
+DELETE FROM Products WHERE name IS NOT NULL AND name <> 'Null';
+
+SELECT * FROM Users;
+SELECT * FROM Products;
+SELECT * FROM Orders;
+SELECT * FROM Order_Items;
